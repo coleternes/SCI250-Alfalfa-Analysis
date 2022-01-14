@@ -1,0 +1,212 @@
+---
+title: "Alfalfa Analysis"
+author: "Nick Callen, Dela Hatfield, Cole Ternes, Logan Welsh"
+date: "3/28/2020"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r import_data, echo=FALSE}
+#Imports data
+setwd("C:/Users/Cole Ternes/Desktop/CPSC_courses/personalprojects/Alfalfa")
+data.raw <- read.csv("raw_data.csv", stringsAsFactors = F)
+#Call libraries
+library(ggplot2)
+```
+
+```{r prep_data, echo=FALSE}
+#Vectors
+n_sa_rep <- c()
+n_sa_nodes <- c()
+n_sa_mass <- c()
+
+n_te_rep <- c()
+n_te_nodes <- c()
+n_te_mass <- c()
+
+n_ma_rep <- c()
+n_ma_nodes <- c()
+n_ma_mass <- c()
+
+y_sa_rep <- c()
+y_sa_nodes <- c()
+y_sa_mass <- c()
+
+y_te_rep <- c()
+y_te_nodes <- c()
+y_te_mass <- c()
+
+y_ma_rep <- c()
+y_ma_nodes <- c()
+y_ma_mass <- c()
+
+#For-Loop to input data into vectors
+for (i in 1:nrow(data.raw)) {
+  if (data.raw[i,1] == "N_Sa") {
+    n_sa_rep <- c(n_sa_rep, data.raw[i,4])
+    n_sa_nodes <- c(n_sa_nodes, data.raw[i,5])
+    n_sa_mass <- c(n_sa_mass, data.raw[i,6])
+  } else if (data.raw[i,1] == "N_Te") {
+    n_te_rep <- c(n_te_rep, data.raw[i,4])
+    n_te_nodes <- c(n_te_nodes, data.raw[i,5])
+    n_te_mass <- c(n_te_mass, data.raw[i,6])
+  } else if (data.raw[i,1] == "N_Ma") {
+    n_ma_rep <- c(n_ma_rep, data.raw[i,4])
+    n_ma_nodes <- c(n_ma_nodes, data.raw[i,5])
+    n_ma_mass <- c(n_ma_mass, data.raw[i,6])
+  } else if (data.raw[i,1] == "Y_Sa") {
+    y_sa_rep <- c(y_sa_rep, data.raw[i,4])
+    y_sa_nodes <- c(y_sa_nodes, data.raw[i,5])
+    y_sa_mass <- c(y_sa_mass, data.raw[i,6])
+  } else if (data.raw[i,1] == "Y_Te") {
+    y_te_rep <- c(y_te_rep, data.raw[i,4])
+    y_te_nodes <- c(y_te_nodes, data.raw[i,5])
+    y_te_mass <- c(y_te_mass, data.raw[i,6])
+  } else if (data.raw[i,1] == "Y_Ma") {
+    y_ma_rep <- c(y_ma_rep, data.raw[i,4])
+    y_ma_nodes <- c(y_ma_nodes, data.raw[i,5])
+    y_ma_mass <- c(y_ma_mass, data.raw[i,6])
+  } 
+}
+```
+
+
+```{r plot_n_nodes_df, echo=FALSE}
+#No Bacteria Node_Plot Variables
+n_sa_nodes_df <- data.frame(x=n_sa_rep, y=n_sa_nodes)
+n_te_nodes_df <- data.frame(x=n_te_rep, y=n_te_nodes)
+n_ma_nodes_df <- data.frame(x=n_ma_rep, y=n_ma_nodes)
+
+n_sa_nodes_df$Treatment="Sand"
+n_te_nodes_df$Treatment="Terrain"
+n_ma_nodes_df$Treatment="Martian"
+
+n_nodes_df=rbind(n_sa_nodes_df, n_te_nodes_df, n_ma_nodes_df)
+
+n_sa_nodes_mean <- mean(n_sa_nodes)
+n_te_nodes_mean <- mean(n_te_nodes)
+n_ma_nodes_mean <- mean(n_ma_nodes)
+
+#Plot
+ggplot(n_nodes_df) + geom_line(aes(x, y, colour=Treatment)) + xlab("Replicates") + ylab("Number of Nodes")  + theme_minimal() + ggtitle("Number of Nodes per Replicate without Bacteria")
+```
+
+Mean Number of Nodes for Sand Treatment: `r n_sa_nodes_mean`
+
+Mean Number of Nodes for Terrain Treatment: `r n_te_nodes_mean`
+
+Mean Number of Nodes for Martian Treatment: `r n_ma_nodes_mean`
+
+```{r plot_y_nodes_df, echo=FALSE}
+#Yes Bacteria Node_Plot Variables
+y_sa_nodes_df <- data.frame(x=y_sa_rep, y=y_sa_nodes)
+y_te_nodes_df <- data.frame(x=y_te_rep, y=y_te_nodes)
+y_ma_nodes_df <- data.frame(x=y_ma_rep, y=y_ma_nodes)
+
+y_sa_nodes_df$Treatment="Sand"
+y_te_nodes_df$Treatment="Terrain"
+y_ma_nodes_df$Treatment="Martian"
+
+y_nodes_df=rbind(y_sa_nodes_df, y_te_nodes_df, y_ma_nodes_df)
+
+y_sa_nodes_mean <- mean(y_sa_nodes)
+y_te_nodes_mean <- mean(y_te_nodes)
+y_ma_nodes_mean <- mean(y_ma_nodes)
+
+#Plot
+ggplot(y_nodes_df) + geom_line(aes(x, y, colour=Treatment)) + xlab("Replicates") + ylab("Number of Nodes")  + theme_minimal() + ggtitle("Number of Nodes per Replicate with Bacteria")
+```
+
+Mean Number of Nodes for Sand Treatment: `r y_sa_nodes_mean`
+
+Mean Number of Nodes for Terrain Treatment: `r y_te_nodes_mean`
+
+Mean Number of Nodes for Martian Treatment: `r y_ma_nodes_mean`
+
+``` {r plot_total_nodes, echo=FALSE}
+#Total_Node_Plot Variables
+n_sa_total_nodes <- sum(n_sa_nodes)
+n_te_total_nodes <- sum(n_te_nodes)
+n_ma_total_nodes <- sum(n_ma_nodes)
+y_sa_total_nodes <- sum(y_sa_nodes)
+y_te_total_nodes <- sum(y_te_nodes)
+y_ma_total_nodes <- sum(y_ma_nodes)
+
+total_nodes_df <- data.frame(x=c("No Bac/Sand", "No Bac/Terrain", "No Bac/Martian", "Yes Bac/Sand", "Yes Bac/Terrain", "Yes Bac/Martian"), y=c(n_sa_total_nodes, n_te_total_nodes, n_ma_total_nodes, y_sa_total_nodes, y_te_total_nodes, y_ma_total_nodes))
+
+#Plot
+ggplot(data=total_nodes_df, aes(x=x, y=y)) + geom_bar(stat="identity", fill="steelblue") + xlab("") + ylab("Total Number of Nodes") + theme_minimal() + ggtitle("Total Number of Nodes per Treatment") + geom_text(aes(label=y), vjust=-0.3, size=3.5)
+```
+
+
+``` {r plot_n_mass_df, echo=FALSE}
+#No Bacteria Mass_Plot Variables
+n_sa_mass_df <- data.frame(x=n_sa_rep, y=n_sa_mass)
+n_te_mass_df <- data.frame(x=n_te_rep, y=n_te_mass)
+n_ma_mass_df <- data.frame(x=n_ma_rep, y=n_ma_mass)
+
+n_sa_mass_df$Treatment="Sand"
+n_te_mass_df$Treatment="Terrain"
+n_ma_mass_df$Treatment="Martian"
+
+n_mass_df=rbind(n_sa_mass_df, n_te_mass_df, n_ma_mass_df)
+
+n_sa_mass_mean <- mean(n_sa_mass)
+n_te_mass_mean <- mean(n_te_mass)
+n_ma_mass_mean <- mean(n_ma_mass)
+
+#Plot
+ggplot(n_mass_df) + geom_line(aes(x, y, colour=Treatment)) + xlab("Replicates") + ylab("Shoot Mass (mg)")  + theme_minimal() + ggtitle("Mass per Replicate without Bacteria")
+```
+
+Mean Shoot Mass for Sand Treatment: `r n_sa_mass_mean` mg
+
+Mean Shoot Mass for Terrain Treatment: `r n_te_mass_mean` mg
+
+Mean Shoot Mass for Martian Treatment: `r n_ma_mass_mean` mg
+
+``` {r plot_y_mass_df, echo=FALSE}
+#Yes Bacteria Mass_Plot Variables
+y_sa_mass_df <- data.frame(x=y_sa_rep, y=y_sa_mass)
+y_te_mass_df <- data.frame(x=y_te_rep, y=y_te_mass)
+y_ma_mass_df <- data.frame(x=y_ma_rep, y=y_ma_mass)
+
+y_sa_mass_df$Treatment="Sand"
+y_te_mass_df$Treatment="Terrain"
+y_ma_mass_df$Treatment="Martian"
+
+y_mass_df=rbind(y_sa_mass_df, y_te_mass_df, y_ma_mass_df)
+
+y_sa_mass_mean <- mean(y_sa_mass)
+y_te_mass_mean <- mean(y_te_mass)
+y_ma_mass_mean <- mean(y_ma_mass)
+
+#Plot
+ggplot(y_mass_df) + geom_line(aes(x, y, colour=Treatment)) + xlab("Replicates") + ylab("Shoot Mass (mg)")  + theme_minimal() + ggtitle("Mass per Replicate with Bacteria")
+```
+
+Mean Shoot Mass for Sand Treatment: `r y_sa_mass_mean` mg
+
+Mean Shoot Mass for Terrain Treatment: `r y_te_mass_mean` mg
+
+Mean Shoot Mass for Martian Treatment: `r y_ma_mass_mean` mg
+
+``` {r plot_total_mass, echo=FALSE}
+#Total_Mass_Plot Variables
+n_sa_total_mass <- sum(n_sa_mass)
+n_te_total_mass <- sum(n_te_mass)
+n_ma_total_mass <- sum(n_ma_mass)
+y_sa_total_mass <- sum(y_sa_mass)
+y_te_total_mass <- sum(y_te_mass)
+y_ma_total_mass <- sum(y_ma_mass)
+
+total_mass_df <- data.frame(x=c("No Bac/Sand", "No Bac/Terrain", "No Bac/Martian", "Yes Bac/Sand", "Yes Bac/Terrain", "Yes Bac/Martian"), y=c(n_sa_total_mass, n_te_total_mass, n_ma_total_mass, y_sa_total_mass, y_te_total_mass, y_ma_total_mass))
+
+#Plot
+ggplot(data=total_mass_df, aes(x=x, y=y)) + geom_bar(stat="identity", fill="steelblue") + xlab("") + ylab("Total Shoot Mass (mg)") + theme_minimal() + ggtitle("Total Shoot Mass (mg) per Treatment") + geom_text(aes(label=y), vjust=-0.3, size=3.5)
+```
